@@ -47,7 +47,7 @@ export default function App() {
       console.error(`Error fetching movies ${error}`);
       setErrorMessage("Error fetching movies. Please try again later.");
     } finally {
-      setIsLoading(true);
+      setIsLoading(false);
     }
   };
 

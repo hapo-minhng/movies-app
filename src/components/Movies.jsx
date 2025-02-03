@@ -1,9 +1,10 @@
 import LoadingSpinner from "./LoadingSpinner";
+import MovieCard from "./MovieCard";
 
 export default function Movies({ errorMessage, isLoading, movieList }) {
   return (
     <section className="all-movies">
-      <h2>All Movies</h2>
+      <h2 className="mt-2">All Movies</h2>
 
       {isLoading ? (
         <LoadingSpinner />
@@ -12,9 +13,7 @@ export default function Movies({ errorMessage, isLoading, movieList }) {
       ) : (
         <ul>
           {movieList.map((movie) => (
-            <p key={movie.id} className="text-white">
-              {movie.title}
-            </p>
+            <MovieCard key={movie.id} movie={movie} />
           ))}
         </ul>
       )}
