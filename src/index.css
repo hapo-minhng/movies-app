@@ -42,3 +42,8 @@ h2 {
   text-align: right;
   cursor: pointer;
 }
+
+.container {
+  display: flex;
+  max-width: 1024px;
+}
