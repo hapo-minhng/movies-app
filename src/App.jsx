@@ -8,9 +8,9 @@ const API_BASE_URL = "https://api.themoviedb.org/3";
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
 const API_OPTIONS = {
-  method: 'GET',
+  method: "GET",
   headers: {
-    accept: 'application/json',
+    accept: "application/json",
     Authorization: `Bearer ${API_KEY}`,
   },
 };
@@ -21,12 +21,14 @@ export default function App() {
   const [movieList, setMovieList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchMovies = async () => {
+  const fetchMovies = async (query = "") => {
     setIsLoading(true);
     setErrorMessage("");
 
     try {
-      const endpoint = `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
+      const endpoint = query
+        ? `${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}`
+        : `${API_BASE_URL}/discover/movie?sort_by=popularity.desc`;
 
       const response = await fetch(endpoint, API_OPTIONS);
 
@@ -52,8 +54,8 @@ export default function App() {
   };
 
   useEffect(() => {
-    fetchMovies();
-  }, []);
+    fetchMovies(searchText);
+  }, [searchText]);
 
   return (
     <main>
@@ -64,7 +66,11 @@ export default function App() {
 
         <Search searchText={searchText} setSearchText={setSearchText} />
 
-        <Movies errorMessage={errorMessage} isLoading={isLoading} movieList={movieList} />
+        <Movies
+          errorMessage={errorMessage}
+          isLoading={isLoading}
+          movieList={movieList}
+        />
       </div>
     </main>
   );
