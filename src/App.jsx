@@ -3,6 +3,8 @@ import Header from "./components/Header";
 import Search from "./components/Search";
 import Movies from "./components/Movies";
 import { useDebounce } from "react-use";
+import { getTrendingMovies, updateSearchCount } from "./appwrite";
+import TrendingMovies from "./components/TrendingMovies";
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
 
@@ -20,6 +22,7 @@ export default function App() {
   const [searchText, setSearchText] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [movieList, setMovieList] = useState([]);
+  const [trendingMovies, setTrendingMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [debouncedSeachText, setDebouncedSeachText] = useState("");
 
@@ -49,6 +52,10 @@ export default function App() {
       }
 
       setMovieList(data.results || []);
+
+      if (query && data.results.length > 0) {
+        await updateSearchCount(query, data.results[0]);
+      }
     } catch (error) {
       console.error(`Error fetching movies ${error}`);
       setErrorMessage("Error fetching movies. Please try again later.");
@@ -57,9 +64,23 @@ export default function App() {
     }
   };
 
+  const loadTrendingMovies = async () => {
+    try {
+      const movies = await getTrendingMovies();
+
+      setTrendingMovies(movies);
+    } catch (error) {
+      console.error(`Failed to fetch trending movies: ${error}`);
+    }
+  };
+
   useEffect(() => {
     fetchMovies(debouncedSeachText);
   }, [debouncedSeachText]);
+
+  useEffect(() => {
+    loadTrendingMovies();
+  }, []);
 
   return (
     <main>
@@ -69,6 +90,8 @@ export default function App() {
         <Header />
 
         <Search searchText={searchText} setSearchText={setSearchText} />
+
+        <TrendingMovies trendingMovies={trendingMovies} />
 
         <Movies
           errorMessage={errorMessage}
